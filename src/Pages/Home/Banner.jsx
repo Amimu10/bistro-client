@@ -7,25 +7,28 @@ import img4 from "../../assets/home/04.jpg";
 import img5 from "../../assets/home/05.png";
 import img6 from "../../assets/home/06.png";
 const Banner = () => {
+    const imageStyle = {
+        maxHeight: "570px", // Set the desired max height here
+    };
     return (
         <Carousel>
                 <div>
-                <img src={img1} />
+                <img src={img1} style={imageStyle}/>
                 </div>
                 <div>
-                <img src={img2} />
+                <img src={img2} style={imageStyle}/>
                 </div>
                 <div>
-                <img src={img3} />
+                <img src={img3} style={imageStyle}/>
                 </div>
                 <div>
-                <img src={img4} />
+                <img src={img4} style={imageStyle}/>
                 </div>
                 <div>
-                <img src={img5} />
+                <img src={img5} style={imageStyle}/>
                 </div>
                 <div>
-                <img src={img6} />
+                <img src={img6} style={imageStyle}/>
                 </div>
             </Carousel>
     );

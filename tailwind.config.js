@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/tw-elements-react/dist/js/**/*.js"
   ],
   theme: {
     extend: {
@@ -13,9 +14,10 @@ export default {
       backgroundImage: {
         'featured-bg': "linear-gradient(0deg, rgba(21, 21, 21, 0.70) 0%, rgba(21, 21, 21, 0.70)), url('./src/assets/home/featured.jpg')", 
        
-      }
+      } 
     },
   },
-  plugins: [require("daisyui")], 
-}
+  plugins: [require("daisyui"), require("tw-elements-react/dist/plugin.cjs")],
+};
+
 

@@ -23,7 +23,7 @@ const Testimonial = () => {
 
 
   return ( 
-    <section>
+    <section className="max-w-[1200px] mx-auto px-5">
       <SectionTitle
         subHeading="---What Our Clients Say---"
         heading={"TESTIMONIALS"}
