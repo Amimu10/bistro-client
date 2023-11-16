@@ -1,42 +1,82 @@
 import { TEInput, TERipple } from "tw-elements-react";
 import { FcGoogle } from "react-icons/fc";
-import formImg from "../../assets/others/login.png"
+import formImg from "../../assets/others/login.png";
 import formBg from "../../assets/others/bg.png";
 
 import { Link } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
 
+import { useForm } from "react-hook-form";
+import { Helmet } from "react-helmet-async";
+import { AuthContext } from "../../Providers/AuthProvider";
+import { useContext } from "react";
 
-  const handleRegister = (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const name = form.name.value; 
-      const email = form.email.value;
-      const password = form.password.value;
+// const handleRegister = (e) => {
+//     e.preventDefault();
+//     const form = e.target;
+//     const name = form.name.value;
+//     const email = form.email.value;
+//     const password = form.password.value;
 
-      console.log(name, email, password); 
+//     console.log(name, email, password);
 
-  }
+// }
 
-const Register = () => {   
-    return (
-        
-        <section className=" h-min" style={{ backgroundImage: `url(${formBg})` }}>
-        <div className=" w-full p-12"> 
-          <div className="flex lg:flex-row flex-col items-center justify-center lg:justify-between max-w-[1200px] mx-auto lg:px-8 px-6 py-8" style={{boxShadow: '10px 10px 10px 10px rgba(0, 0, 0, 0.25)'}}>
+const Register = () => {
+  const { createUser, updateUserProfile } = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    reset, 
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+    createUser(data.email, data.password)
+    .then(result => {
+      const loggedUser = result?.user;
+      console.log(loggedUser);
+      updateUserProfile(data.name, data.photoURL)
+      .then(() =>{
+        console.log("user profile info updated");
+        reset(); //
+      }) 
+      .catch(err => {
+        console.log(err.message)
+      })
+    });
+  };
+
+  console.log(watch("example"));
+
+  return (
+    <>
+      <Helmet>
+        <title>Bistro Boss | Register</title>
+      </Helmet>
+      <section className=" h-min" style={{ backgroundImage: `url(${formBg})` }}>
+        <div className=" w-full p-12">
+          <div
+            className="flex lg:flex-row flex-col items-center justify-center lg:justify-between max-w-[1200px] mx-auto lg:px-8 px-6 py-8"
+            style={{ boxShadow: "10px 10px 10px 10px rgba(0, 0, 0, 0.25)" }}
+          >
             <div className="shrink-1 mb-12 grow-0 basis-auto md:mb-0 md:w-9/12 md:shrink-0 lg:w-6/12 xl:w-6/12">
-            <Link to="/">
-            <FaHome className="text-4xl text-[#D1A054]  hover:scale-110 duration-300" />
-            </Link> 
+              <Link to="/">
+                <FaHome className="text-4xl text-[#D1A054]  hover:scale-110 duration-300" />
+              </Link>
               <img
                 src={formImg}
-                className="max-w-full flex-1" 
+                className="max-w-full flex-1"
                 alt="Sample image"
               />
             </div>
             <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12 ">
-              <h3 className="text-center text-[#151515] lg:text-[40px] md:text-[32px] text-[28px] font-bold font-inter">Register</h3> 
-              <form onSubmit={handleRegister}>
+              <h3 className="text-center text-[#151515] lg:text-[40px] md:text-[32px] text-[28px] font-bold font-inter">
+                Register
+              </h3>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-row items-center justify-center lg:justify-start">
                   <p className="mb-0 mr-4 text-lg">Sign in with</p>
                   <TERipple rippleColor="light">
@@ -44,7 +84,7 @@ const Register = () => {
                       type="button"
                       className=" bg-white shadow-lg p-2 rounded-full"
                     >
-                      <FcGoogle className=" text-2xl"/>
+                      <FcGoogle className=" text-2xl" />
                     </button>
                   </TERipple>
                 </div>
@@ -53,23 +93,76 @@ const Register = () => {
                     Or
                   </p>
                 </div>
+                {errors.name && (
+                  <span className="text-pink-600 text-xs">
+                    Name is required
+                  </span>
+                )}
                 <TEInput
                   type="text"
+                  {...register("name", { required: true })}
                   name="name"
-                  label="Your Name"   
+                  label="Your Name"
+                  size="lg"
+                  className="mb-6 text-[#D1A054] border-[#D1A054]"
+                ></TEInput>  
+                 {errors.photoURL && (
+                  <span className="text-pink-600 text-xs">
+                    photoURL is required 
+                  </span> 
+                )}
+                <TEInput
+                  type="text"
+                  {...register("photoURL", { required: true })}
+                  label="photoURL"
                   size="lg"
                   className="mb-6 text-[#D1A054] border-[#D1A054]"
                 ></TEInput>
+                {errors.email && (
+                  <span className="text-pink-600 -mt-5 text-xs">
+                    Email is required
+                  </span>
+                )}
                 <TEInput
                   type="email"
+                  {...register("email", { required: true })}
                   name="email"
                   label="Email address"
                   size="lg"
                   className="mb-6 text-[#D1A054] border-[#D1A054]"
                 ></TEInput>
+                {errors.password?.type === "required" && (
+                  <span className="text-pink-600 text-xs">
+                    Password is required
+                  </span>
+                )}
+                {errors.password?.type === "minLength" && (
+                  <span className="text-pink-600 text-xs">
+                    Password must be at least 6 characters
+                  </span>
+                )}
+                {errors.password?.type === "maxLength" && (
+                  <span className="text-pink-600 text-xs mb-4">
+                    Password must be less than 20 characters
+                  </span>
+                )}
+                {errors.password?.type === "pattern" && (
+                  <span className="text-pink-600 text-xs">
+                    Password should hav one lowercase, one uppercase letter &
+                    one special character
+                  </span>
+                )}
                 <TEInput
                   type="password"
-                  name="password" 
+                  {...register("password", {
+                    required: true,
+                    minLength: 6,
+                    maxLength: 20,
+                    pattern:
+                    // /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-])$/
+                    /^(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-])/
+                  })}
+                  name="password"
                   label="Password"
                   className="mb-6"
                   size="lg"
@@ -89,9 +182,11 @@ const Register = () => {
                       Remember me
                     </label>
                   </div>
-                  <Link className="text-[#D1A054]" href="#!">Forgot password?</Link>
+                  <Link className="text-[#D1A054]" href="#!">
+                    Forgot password?
+                  </Link>
                 </div>
-  
+
                 <div className="text-center gap-4 items-center">
                   <TERipple rippleColor="light">
                     <button
@@ -101,28 +196,29 @@ const Register = () => {
                       Register
                     </button>
                   </TERipple>
-                <div className="flex lg:flex-row md:flex-col gap-4 my-5">
-                <div>
-                <Link className="mb-0 mt-2 pt-1 text-sm font-semibold text-[#D1A054]">
-                    Already have an account?{" "} </Link> 
-                </div>
-                    <Link to="/login">
-                    <button
-                      href="#!" 
-                      className="transition duration-150 ease-in-out text-[#D1A054] hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
-                    > 
-                     Login
-                    </button>
+                  <div className="flex lg:flex-row md:flex-col gap-4 my-5">
+                    <div>
+                      <Link className="mb-0 mt-2 pt-1 text-sm font-semibold text-[#D1A054]">
+                        Already have an account?{" "}
+                      </Link>
+                    </div>
+                    <Link to="/login"> 
+                      <button
+                        href="#!"
+                        className="transition duration-150 ease-in-out text-[#D1A054] hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
+                      >
+                        Login
+                      </button>
                     </Link>
-                </div>
+                  </div>
                 </div>
               </form>
             </div>
           </div>
         </div>
       </section>
-    
-    );
+    </>
+  );
 };
 
 export default Register;
