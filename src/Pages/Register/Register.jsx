@@ -2,14 +2,15 @@ import { TEInput, TERipple } from "tw-elements-react";
 import { FcGoogle } from "react-icons/fc";
 import formImg from "../../assets/others/login.png";
 import formBg from "../../assets/others/bg.png";
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
-
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet-async";
 import { AuthContext } from "../../Providers/AuthProvider";
 import { useContext } from "react";
+import { toast } from "react-hot-toast";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
 
 // const handleRegister = (e) => {
 //     e.preventDefault();
@@ -31,6 +32,8 @@ const Register = () => {
     watch,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate(); 
+  const axiosPublic = useAxiosPublic(); 
 
   const onSubmit = (data) => {
     console.log(data);
@@ -38,10 +41,25 @@ const Register = () => {
     .then(result => {
       const loggedUser = result?.user;
       console.log(loggedUser);
-      updateUserProfile(data.name, data.photoURL)
+      updateUserProfile(data.name, data.photoURL) 
       .then(() =>{
-        console.log("user profile info updated");
-        reset(); //
+            
+        const userInfo = {
+          name: data.name,
+          // photoURL: data.photoURL,
+          email: data.email,
+          
+      }
+
+      axiosPublic.post("/users", userInfo) 
+      .then(res => {
+         if(res.data.insertedId){  
+          reset(); 
+          toast.success("User created Successfully!", { duration: 3000 }); 
+          navigate("/"); 
+         }
+      })
+       
       }) 
       .catch(err => {
         console.log(err.message)
@@ -78,15 +96,7 @@ const Register = () => {
               </h3>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-row items-center justify-center lg:justify-start">
-                  <p className="mb-0 mr-4 text-lg">Sign in with</p>
-                  <TERipple rippleColor="light">
-                    <button
-                      type="button"
-                      className=" bg-white shadow-lg p-2 rounded-full"
-                    >
-                      <FcGoogle className=" text-2xl" />
-                    </button>
-                  </TERipple>
+                <SocialLogin></SocialLogin>
                 </div>
                 <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-[#D1A054] after:mt-0.5 after:flex-1 after:border-t after:border-[#D1A054]">
                   <p className="mx-4 mb-0 text-center font-semibold dark:text-white text-[#D1A054]">
@@ -207,7 +217,7 @@ const Register = () => {
                         href="#!"
                         className="transition duration-150 ease-in-out text-[#D1A054] hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                       >
-                        Login
+                        Login 
                       </button>
                     </Link>
                   </div>

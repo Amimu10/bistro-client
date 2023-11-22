@@ -14,6 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-hot-toast";
+import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
 
 const Login = () => {
   const { signInUser } = useContext(AuthContext);
@@ -22,7 +23,7 @@ const Login = () => {
   const navigate = useNavigate(); 
   const location = useLocation(); 
 
-const from = location.state?.form?.pathname || "/";  
+const from = location.state?.form?.pathname || "/";   
 
   useEffect(() => {
     loadCaptchaEnginge(6); 
@@ -84,15 +85,7 @@ const from = location.state?.form?.pathname || "/";
               </h3>
               <form onSubmit={handleLogin}>
                 <div className="flex flex-row items-center justify-center lg:justify-start">
-                  <p className="mb-0 mr-4 text-lg">Sign in with</p>
-                  <TERipple rippleColor="light">
-                    <button
-                      type="button"
-                      className=" bg-white shadow-lg p-2 rounded-full"
-                    >
-                      <FcGoogle className=" text-2xl" />
-                    </button>
-                  </TERipple>
+                <SocialLogin></SocialLogin>
                 </div>
                 <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-[#D1A054] after:mt-0.5 after:flex-1 after:border-t after:border-[#D1A054]">
                   <p className="mx-4 mb-0 text-center font-semibold dark:text-white text-[#D1A054]">
